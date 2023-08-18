@@ -30,3 +30,12 @@
 *.exe
 *.out
 *.app
+
+*.json
+test.cpp
+Arduino-SD-for-PC/
+Arduino-Cores-for-PC/
+Makefile
+test
+Arduino-Adafruit-Sensor-for-PC/
+C-CSV-Parser/
