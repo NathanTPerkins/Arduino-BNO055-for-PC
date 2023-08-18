@@ -31,6 +31,8 @@
 *.out
 *.app
 
+*.csv
+
 *.json
 test.cpp
 Arduino-SD-for-PC/

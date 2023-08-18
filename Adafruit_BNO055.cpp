@@ -1,69 +1,16 @@
 #include "Arduino.h"
 
 #include <limits.h>
+#include <string.h>
+#include <time.h>
 #include <math.h>
 
 #include "Adafruit_BNO055.h"
 
-#define ACC_X 0
-#define ACC_Y 1
-#define ACC_Z 2
-#define GYRO_X 3
-#define GYRO_Y 4
-#define GYRO_Z 5
-#define MAG_X 6
-#define MAG_Y 7
-#define MAG_Z 8
-#define LIN_ACC_X 9
-#define LIN_ACC_Y 10
-#define LIN_ACC_Z 11
-#define ANG_VEL_X 12
-#define ANG_VEL_Y 13
-#define ANG_VEL_Z 14
-#define EULER_X 15
-#define EULER_Y 16
-#define EULER_Z 17
-#define GRAVITY_X 18
-#define GRAVITY_Y 19
-#define GRAVITY_Z 20
-#define ALT 21
-#define TEMP 22
-
-/*
-
-Column Names for CSV
-
-
-acc_x,
-acc_y,
-acc_z,
-gyro_x,
-gyro_y,
-gyro_z,
-mag_x,
-mag_y,
-mag_z,
-lin_acc_x,
-lin_acc_y,
-lin_acc_z,
-ang_vel_x,
-ang_vel_y,
-ang_vel_z,
-euler_x,
-euler_y,
-euler_z,
-gravity_x,
-gravity_y,
-gravity_z,
-alt,
-temp,
-
-
-*/
-
-Adafruit_BNO055::Adafruit_BNO055(int32_t sensorID = -1, uint8_t address = BNO055_ADDRESS_A, const char * filename = NULL){
+Adafruit_BNO055::Adafruit_BNO055(int32_t sensorID, uint8_t address, const char * filename){
     if(filename == NULL){
         this->random_values = true;
+        srand(time(NULL));
         return;
     }
     this->random_values = false;
@@ -149,16 +96,27 @@ void Adafruit_BNO055::getCalibration(uint8_t* sys, uint8_t* gyro, uint8_t* accel
 }
 
 int8_t Adafruit_BNO055::getTemp(){
-    if(this->file_index >= this->sensor_data.getSize()){
+    if(this->random_values){
+        return rand() / rand();
+    }
+    if(this->file_index >= this->sensor_data->getSize()){
         return 0;
     }
-    return this->sensor_data[TEMP][this->file_index++];
+    int8_t temp = (int8_t)atoi(this->sensor_data->operator[](this->file_index)[TEMP]);
+    return temp;
 }
 
 imu::Vector<3> Adafruit_BNO055::getVector(adafruit_vector_type_t vector_type){
     imu::Vector<3> v;
 
-    if(this->file_index >= this->sensor_data.getSize()){
+    if(this->random_values){
+        v[0] = rand() / rand();
+        v[1] = rand() / rand();
+        v[2] = rand() / rand();
+        return v;
+    }
+    
+    if(this->file_index >= this->sensor_data->getSize()){
         v[0] = 0;
         v[1] = 0;
         v[2] = 0;
@@ -168,34 +126,34 @@ imu::Vector<3> Adafruit_BNO055::getVector(adafruit_vector_type_t vector_type){
     switch (vector_type)
     {
     case VECTOR_ACCELEROMETER:
-    v[0] = this->sensor_data[ACC_X][this->file_index];
-    v[1] = this->sensor_data[ACC_Y][this->file_index];
-    v[2] = this->sensor_data[ACC_Z][this->file_index];
+    v[0] = atof(this->sensor_data->operator[](this->file_index)[ACC_X]);
+    v[1] = atof(this->sensor_data->operator[](this->file_index)[ACC_Y]);
+    v[2] = atof(this->sensor_data->operator[](this->file_index)[ACC_Z]);
     break;
     case VECTOR_GYROSCOPE:
-    v[0] = this->sensor_data[GYRO_X][this->file_index];
-    v[1] = this->sensor_data[GYRO_Y][this->file_index];
-    v[2] = this->sensor_data[GYRO_Z][this->file_index];
+    v[0] = atof(this->sensor_data->operator[](this->file_index)[GYRO_X]);
+    v[1] = atof(this->sensor_data->operator[](this->file_index)[GYRO_Y]);
+    v[2] = atof(this->sensor_data->operator[](this->file_index)[GYRO_Z]);
     break;
     case VECTOR_MAGNETOMETER:
-    v[0] = this->sensor_data[MAG_X][this->file_index];
-    v[1] = this->sensor_data[MAG_Y][this->file_index];
-    v[2] = this->sensor_data[MAG_Z][this->file_index];
+    v[0] = atof(this->sensor_data->operator[](this->file_index)[MAG_X]);
+    v[1] = atof(this->sensor_data->operator[](this->file_index)[MAG_Y]);
+    v[2] = atof(this->sensor_data->operator[](this->file_index)[MAG_Z]);
     break;
     case VECTOR_LINEARACCEL:
-    v[0] = this->sensor_data[LIN_ACC_X][this->file_index];
-    v[1] = this->sensor_data[LIN_ACC_Y][this->file_index];
-    v[2] = this->sensor_data[LIN_ACC_Z][this->file_index];
+    v[0] = atof(this->sensor_data->operator[](this->file_index)[LIN_ACC_X]);
+    v[1] = atof(this->sensor_data->operator[](this->file_index)[LIN_ACC_Y]);
+    v[2] = atof(this->sensor_data->operator[](this->file_index)[LIN_ACC_Z]);
     break;
     case VECTOR_EULER:
-    v[0] = this->sensor_data[EULER_X][this->file_index];
-    v[1] = this->sensor_data[EULER_Y][this->file_index];
-    v[2] = this->sensor_data[EULER_Z][this->file_index];
+    v[0] = atof(this->sensor_data->operator[](this->file_index)[EULER_X]);
+    v[1] = atof(this->sensor_data->operator[](this->file_index)[EULER_Y]);
+    v[2] = atof(this->sensor_data->operator[](this->file_index)[EULER_Z]);
     break;
     case VECTOR_GRAVITY:
-    v[0] = this->sensor_data[GRAVITY_X][this->file_index];
-    v[1] = this->sensor_data[GRAVITY_Y][this->file_index];
-    v[2] = this->sensor_data[GRAVITY_Z][this->file_index];
+    v[0] = atof(this->sensor_data->operator[](this->file_index)[GRAVITY_X]);
+    v[1] = atof(this->sensor_data->operator[](this->file_index)[GRAVITY_Y]);
+    v[2] = atof(this->sensor_data->operator[](this->file_index)[GRAVITY_Z]);
     break;
     
     default:
@@ -240,7 +198,6 @@ bool Adafruit_BNO055::getEvent(sensors_event_t *event) {
     event->orientation.x = euler.x();
     event->orientation.y = euler.y();
     event->orientation.z = euler.z();
-    ++this->file_index;
     return true;
 }
 
@@ -297,7 +254,6 @@ bool Adafruit_BNO055::getEvent(sensors_event_t *event, adafruit_vector_type_t ve
         event->magnetic.y = vec.y();
         event->magnetic.z = vec.z();
     }
-    ++this->file_index;
     return true;
 }
 
@@ -326,5 +282,9 @@ bool Adafruit_BNO055::isFullyCalibrated(){
 
 void Adafruit_BNO055::enterSuspendMode() {}
 void Adafruit_BNO055::enterNormalMode() {}
+
+void Adafruit_BNO055::increase_file_index(){
+    ++this->file_index;
+}
 
 

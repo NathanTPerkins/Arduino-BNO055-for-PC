@@ -11,6 +11,54 @@
 
 #endif
 
+#define ACC_X 0
+#define ACC_Y 1
+#define ACC_Z 2
+#define GYRO_X 3
+#define GYRO_Y 4
+#define GYRO_Z 5
+#define MAG_X 6
+#define MAG_Y 7
+#define MAG_Z 8
+#define LIN_ACC_X 9
+#define LIN_ACC_Y 10
+#define LIN_ACC_Z 11
+#define EULER_X 12
+#define EULER_Y 13
+#define EULER_Z 14
+#define GRAVITY_X 15
+#define GRAVITY_Y 16
+#define GRAVITY_Z 17
+#define TEMP 18
+
+/*
+
+Column Names for CSV
+
+
+acc_x,
+acc_y,
+acc_z,
+gyro_x,
+gyro_y,
+gyro_z,
+mag_x,
+mag_y,
+mag_z,
+lin_acc_x,
+lin_acc_y,
+lin_acc_z,
+euler_x,
+euler_y,
+euler_z,
+gravity_x,
+gravity_y,
+gravity_z,
+temp,
+
+
+*/
+
 /** BNO055 Address A **/
 #define BNO055_ADDRESS_A (0x28)
 /** BNO055 Address B **/
@@ -297,6 +345,8 @@ public:
     /* Power managments functions */
     void enterSuspendMode();
     void enterNormalMode();
+
+    void increase_file_index();
 
 
     private:
