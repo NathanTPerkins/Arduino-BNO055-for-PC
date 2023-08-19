@@ -4,7 +4,6 @@
 #include "Arduino.h"
 #include <Adafruit_Sensor.h>
 #include "utility/imumaths.h"
-#define USING_CSV
 #ifdef USING_CSV
 
 #include <CSVParser.h>
