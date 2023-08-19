@@ -7,9 +7,6 @@
 #ifdef USING_CSV
 
 #include <CSVParser.h>
-
-#endif
-
 #define ACC_X 0
 #define ACC_Y 1
 #define ACC_Z 2
@@ -29,6 +26,7 @@
 #define GRAVITY_Y 16
 #define GRAVITY_Z 17
 #define TEMP 18
+#endif
 
 /*
 
