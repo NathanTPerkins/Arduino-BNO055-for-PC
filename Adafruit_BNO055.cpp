@@ -14,10 +14,16 @@ Adafruit_BNO055::Adafruit_BNO055(int32_t sensorID, uint8_t address, const char *
         return;
     }
     this->random_values = false;
+    
+    #ifdef USING_CSV
     this->_filename = new char[strlen(filename) + 1];
     strncpy(this->_filename, filename, strlen(filename) + 1);
     sensor_data = new csv_parser::parser(filename, 10);
     this->file_index = 0;
+    #else
+    srand(time(NULL));
+    #endif
+    
     this->_running = false;
 }
 
@@ -99,10 +105,14 @@ int8_t Adafruit_BNO055::getTemp(){
     if(this->random_values){
         return rand() / rand();
     }
+    #ifdef USING_CSV
     if(this->file_index >= this->sensor_data->getSize()){
         return 0;
     }
     int8_t temp = (int8_t)atoi(this->sensor_data->operator[](this->file_index)[TEMP]);
+    #else   
+    int8_t temp = rand()/rand();
+    #endif
     return temp;
 }
 
@@ -116,6 +126,7 @@ imu::Vector<3> Adafruit_BNO055::getVector(adafruit_vector_type_t vector_type){
         return v;
     }
     
+    #ifdef USING_CSV
     if(this->file_index >= this->sensor_data->getSize()){
         v[0] = 0;
         v[1] = 0;
@@ -123,45 +134,49 @@ imu::Vector<3> Adafruit_BNO055::getVector(adafruit_vector_type_t vector_type){
         return v;
     }
 
-    switch (vector_type)
-    {
-    case VECTOR_ACCELEROMETER:
-    v[0] = atof(this->sensor_data->operator[](this->file_index)[ACC_X]);
-    v[1] = atof(this->sensor_data->operator[](this->file_index)[ACC_Y]);
-    v[2] = atof(this->sensor_data->operator[](this->file_index)[ACC_Z]);
-    break;
-    case VECTOR_GYROSCOPE:
-    v[0] = atof(this->sensor_data->operator[](this->file_index)[GYRO_X]);
-    v[1] = atof(this->sensor_data->operator[](this->file_index)[GYRO_Y]);
-    v[2] = atof(this->sensor_data->operator[](this->file_index)[GYRO_Z]);
-    break;
-    case VECTOR_MAGNETOMETER:
-    v[0] = atof(this->sensor_data->operator[](this->file_index)[MAG_X]);
-    v[1] = atof(this->sensor_data->operator[](this->file_index)[MAG_Y]);
-    v[2] = atof(this->sensor_data->operator[](this->file_index)[MAG_Z]);
-    break;
-    case VECTOR_LINEARACCEL:
-    v[0] = atof(this->sensor_data->operator[](this->file_index)[LIN_ACC_X]);
-    v[1] = atof(this->sensor_data->operator[](this->file_index)[LIN_ACC_Y]);
-    v[2] = atof(this->sensor_data->operator[](this->file_index)[LIN_ACC_Z]);
-    break;
-    case VECTOR_EULER:
-    v[0] = atof(this->sensor_data->operator[](this->file_index)[EULER_X]);
-    v[1] = atof(this->sensor_data->operator[](this->file_index)[EULER_Y]);
-    v[2] = atof(this->sensor_data->operator[](this->file_index)[EULER_Z]);
-    break;
-    case VECTOR_GRAVITY:
-    v[0] = atof(this->sensor_data->operator[](this->file_index)[GRAVITY_X]);
-    v[1] = atof(this->sensor_data->operator[](this->file_index)[GRAVITY_Y]);
-    v[2] = atof(this->sensor_data->operator[](this->file_index)[GRAVITY_Z]);
-    break;
-    
-    default:
-    v[0] = 0;
-    v[1] = 0;
-    v[2] = 0;
-    break;
+    switch (vector_type){
+        case VECTOR_ACCELEROMETER:
+        v[0] = atof(this->sensor_data->operator[](this->file_index)[ACC_X]);
+        v[1] = atof(this->sensor_data->operator[](this->file_index)[ACC_Y]);
+        v[2] = atof(this->sensor_data->operator[](this->file_index)[ACC_Z]);
+        break;
+        case VECTOR_GYROSCOPE:
+        v[0] = atof(this->sensor_data->operator[](this->file_index)[GYRO_X]);
+        v[1] = atof(this->sensor_data->operator[](this->file_index)[GYRO_Y]);
+        v[2] = atof(this->sensor_data->operator[](this->file_index)[GYRO_Z]);
+        break;
+        case VECTOR_MAGNETOMETER:
+        v[0] = atof(this->sensor_data->operator[](this->file_index)[MAG_X]);
+        v[1] = atof(this->sensor_data->operator[](this->file_index)[MAG_Y]);
+        v[2] = atof(this->sensor_data->operator[](this->file_index)[MAG_Z]);
+        break;
+        case VECTOR_LINEARACCEL:
+        v[0] = atof(this->sensor_data->operator[](this->file_index)[LIN_ACC_X]);
+        v[1] = atof(this->sensor_data->operator[](this->file_index)[LIN_ACC_Y]);
+        v[2] = atof(this->sensor_data->operator[](this->file_index)[LIN_ACC_Z]);
+        break;
+        case VECTOR_EULER:
+        v[0] = atof(this->sensor_data->operator[](this->file_index)[EULER_X]);
+        v[1] = atof(this->sensor_data->operator[](this->file_index)[EULER_Y]);
+        v[2] = atof(this->sensor_data->operator[](this->file_index)[EULER_Z]);
+        break;
+        case VECTOR_GRAVITY:
+        v[0] = atof(this->sensor_data->operator[](this->file_index)[GRAVITY_X]);
+        v[1] = atof(this->sensor_data->operator[](this->file_index)[GRAVITY_Y]);
+        v[2] = atof(this->sensor_data->operator[](this->file_index)[GRAVITY_Z]);
+        break;
+        
+        default:
+        v[0] = 0;
+        v[1] = 0;
+        v[2] = 0;
+        break;
     }
+    #else
+    v[0] = rand() / rand();
+    v[1] = rand() / rand();
+    v[2] = rand() / rand();
+    #endif
     return v;
 }
 
