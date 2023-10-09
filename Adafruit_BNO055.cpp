@@ -7,7 +7,7 @@
 
 #include "Adafruit_BNO055.h"
 
-Adafruit_BNO055::Adafruit_BNO055(int32_t sensorID, uint8_t address, const char * filename){
+Adafruit_BNO055::Adafruit_BNO055(const char * filename){
     if(filename == NULL){
         this->random_values = true;
         srand(time(NULL));
@@ -18,7 +18,7 @@ Adafruit_BNO055::Adafruit_BNO055(int32_t sensorID, uint8_t address, const char *
     #ifdef USING_CSV
     this->_filename = new char[strlen(filename) + 1];
     strncpy(this->_filename, filename, strlen(filename) + 1);
-    sensor_data = new csv_parser::parser(filename, 10);
+    this->sensor_data = new csv_parser::arduino_parser(filename, 10);
     this->file_index = 0;
     #else
     srand(time(NULL));
@@ -300,6 +300,12 @@ void Adafruit_BNO055::enterNormalMode() {}
 
 void Adafruit_BNO055::increase_file_index(){
     ++this->file_index;
+}
+
+void Adafruit_BNO055::show_simulated_file(){
+    #ifdef USING_CSV
+    this->sensor_data->head(this->sensor_data->getSize());
+    #endif
 }
 
 

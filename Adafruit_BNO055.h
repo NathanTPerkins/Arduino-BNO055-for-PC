@@ -309,7 +309,7 @@ public:
     //                 /*TwoWire *theWire = &Wire*/);
 
     //Arduino for PC Constructor - Used with File
-    Adafruit_BNO055(int32_t sensorID = -1, uint8_t address = BNO055_ADDRESS_A, const char * filename = NULL);
+    Adafruit_BNO055(/*int32_t sensorID = -1, uint8_t address = BNO055_ADDRESS_A, */const char * filename = NULL);
 
     bool begin(adafruit_bno055_opmode_t mode = OPERATION_MODE_NDOF);
     void setMode(adafruit_bno055_opmode_t mode);
@@ -345,12 +345,14 @@ public:
 
     void increase_file_index();
 
+    void show_simulated_file();
+
 
     private:
     
     bool random_values;
     #ifdef USING_CSV
-    csv_parser::parser* sensor_data;
+    csv_parser::arduino_parser* sensor_data;
     #endif
     int file_index;
     char *_filename;
